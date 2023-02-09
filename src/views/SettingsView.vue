@@ -6,11 +6,23 @@
     </TopPage>
     <div class="settings__content">
       <DraggableNext class="draggable" :list="cities" @change="onDrag">
-        <SettingsItem class="settings__drag-item" v-for="city in cities" :key="city.id" :name="city.name" :id="city.id"
-          :country="city.country" :city_user="city.city_user" @deleteItem="deleteItem" />
+        <SettingsItem
+          class="settings__drag-item"
+          v-for="city in cities"
+          :key="city.id"
+          :name="city.name"
+          :id="city.id"
+          :country="city.country"
+          :city_user="city.city_user"
+          @deleteItem="deleteItem"
+        />
       </DraggableNext>
     </div>
-    <SettingsInput v-model.trim="name" @setItem="setItem" :disabled="cities.length >= 6"></SettingsInput>
+    <SettingsInput
+      v-model.trim="name"
+      @setItem="setItem"
+      :disabled="cities.length >= 6"
+    ></SettingsInput>
   </div>
 </template>
 <script lang="ts" setup>
@@ -22,45 +34,47 @@ import { fetchCity } from '../api/api';
 import { ICity } from '../types/types';
 import { citiesState } from '../composables/cities';
 
-let cities = citiesState()
+const cities = citiesState();
 
-const name = ref('')
+const name = ref('');
 
 const setItem = async () => {
   if (name.value) {
     try {
-      const response: ICity = await fetchCity(name.value)
-      const index = cities?.value.findIndex((el: Pick<ICity, 'id' | 'name' | 'country'>) => el.id === response.id)
+      const response: ICity = await fetchCity(name.value);
+      const index = cities?.value.findIndex(
+        (el: Pick<ICity, 'id' | 'name' | 'country'>) => el.id === response.id,
+      );
       if (index === -1) {
         const obj: Pick<ICity, 'id' | 'name' | 'country'> = {
           id: response.id,
           name: response.name,
-          country: response.country
-        }
+          country: response.country,
+        };
         if (cities.value.length < 6) {
-          cities.value.push(obj)
-          localStorage.setItem('cities', JSON.stringify(cities.value))
-          name.value = ''
-        }else{
-          alert('Maximum 6 cities')
+          cities.value.push(obj);
+          localStorage.setItem('cities', JSON.stringify(cities.value));
+          name.value = '';
+        } else {
+          alert('Maximum 6 cities');
         }
       } else {
-        alert('The city exists')
+        alert('The city exists');
       }
     } catch (error) {
-     alert('Wrong city name')
+      alert('Wrong city name');
     }
   }
-}
+};
 const deleteItem = (id: number) => {
-  if (confirm("Do you want to delete a city?")) {
-    cities.value = cities.value.filter(el => el.id !== id)
-    localStorage.setItem('cities', JSON.stringify(cities.value))
+  if (confirm('Do you want to delete a city?')) {
+    cities.value = cities.value.filter((el) => el.id !== id);
+    localStorage.setItem('cities', JSON.stringify(cities.value));
   }
-}
+};
 const onDrag = () => {
-  localStorage.setItem('cities', JSON.stringify(cities.value))
-}
+  localStorage.setItem('cities', JSON.stringify(cities.value));
+};
 </script>
 
 <style lang="less" scoped>
@@ -82,4 +96,3 @@ const onDrag = () => {
   margin-top: auto;
 }
 </style>
-

@@ -3,8 +3,7 @@
     <router-view />
   </div>
 </template>
-<script lang="ts">
-</script>
+<script lang="ts"></script>
 <style lang="less" scoped>
 .app {
   width: 350px;
